@@ -55,8 +55,7 @@ export function registerGhostFeature(client) {
 
         if (command !== 'ghost' && command !== 'unghost') return;
 
-        // Check access specifically for the Ghost feature.
-        // The bot owner is automatically authorized by the helper.
+
         if (!hasFeatureAccess(message.author.id, 'ghost')) {
             await message.reply({
                 content: 'You are not authorized to use the Ghost feature.',

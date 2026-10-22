@@ -4,18 +4,13 @@ const BOT_OWNER_ID = process.env.BOT_OWNER_ID;
 
 export const FEATURE_ACCESS = {
     ghost: [
-        '111111111111111111',
-        '222222222222222222',
+        '1513815784982450206',
+
     ],
 
-    moderation: [
-        '333333333333333333',
-    ],
 
-    welcome: [
-        '444444444444444444',
-        '555555555555555555',
-    ],
+
+
 };
 
 
