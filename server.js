@@ -1,17 +1,19 @@
 
 import 'dotenv/config';
 
-import {
-    Client,
-    GatewayIntentBits,
-    Events,
-} from 'discord.js';
+import { Client, GatewayIntentBits, Events } from 'discord.js';
+import { registerApp } from './src/app.js';
 
 const token = process.env.DISCORD_TOKEN;
-
+const ownerId = process.env.BOT_OWNER_ID;
 
 if (!token) {
-    console.error('Error: DISCORD_TOKEN is missing from .env');
+    console.error('DISCORD_TOKEN is missing from .env');
+    process.exit(1);
+}
+
+if (!ownerId) {
+    console.error('DISCORD_OWNER_ID is missing from .env');
     process.exit(1);
 }
 
@@ -23,20 +25,14 @@ const client = new Client({
     ],
 });
 
+
+registerApp(client);
+
 client.once(Events.ClientReady, (readyClient) => {
     console.log(`✅ Bot is online as ${readyClient.user.tag}`);
 });
 
-client.on(Events.MessageCreate, async (message) => {
-
-    if (message.author.bot) return;
-
-
-    if (message.content.trim().toLowerCase() === '!ping') {
-        await message.reply('Pong! 🏓');
-    }
-});
-
 client.login(token).catch((error) => {
-    console.error('Failed to log in to Discord:', error.message);
+    console.error('❌ Failed to log in to Discord:', error.message);
+    process.exitCode = 1;
 });
