@@ -1,16 +1,14 @@
-
 import { Events, PermissionFlagsBits } from 'discord.js';
 import { PREFIX } from '../utils/prefix.js';
 import { hasFeatureAccess } from '../utils/featureAccess.js';
+import { cannotUseFeatureOnOwner } from '../utils/errors-message/featureErrors.js';
 
 const ghostedUsers = new Map();
 
 async function getTargetMember(message) {
-
     const mentionedMember = message.mentions.members.first();
 
     if (mentionedMember) return mentionedMember;
-
 
     if (message.reference?.messageId) {
         try {
@@ -55,7 +53,6 @@ export function registerGhostFeature(client) {
 
         if (command !== 'ghost' && command !== 'unghost') return;
 
-
         if (!hasFeatureAccess(message.author.id, 'ghost')) {
             await message.reply({
                 content: 'You are not authorized to use the Ghost feature.',
@@ -95,8 +92,18 @@ export function registerGhostFeature(client) {
             return;
         }
 
+        // Prevent users from ghosting themselves.
+        if (target.id === message.author.id) {
+            await message.reply({
+                content: 'You cannot ghost yourself.',
+                allowedMentions: { repliedUser: false },
+            }).catch(() => { });
+
+            return;
+        }
+
         // Never allow ghosting bots or the bot owner.
-        if (target.user.bot || target.id === ownerId) {
+        if (target.user.bot) {
             await message.reply(
                 'You cannot ghost this user.'
             ).catch(() => { });
@@ -104,6 +111,15 @@ export function registerGhostFeature(client) {
             return;
         }
 
+        // Bot owner protection.
+        if (target.id === ownerId) {
+            await message.reply({
+                content: cannotUseFeatureOnOwner('ghost'),
+                allowedMentions: { repliedUser: false },
+            }).catch(() => { });
+
+            return;
+        }
 
         if (!ghostedUsers.has(guildId)) {
             ghostedUsers.set(guildId, new Set());
