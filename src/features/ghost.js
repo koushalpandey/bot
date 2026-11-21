@@ -187,9 +187,7 @@ async function replyWithContainer(message, container) {
 export function registerGhostFeature(client) {
     client.on(Events.MessageCreate, async (message) => {
 
-        /*
-         * Ignore DMs and bot messages.
-         */
+
         if (!message.guild || message.author.bot) {
             return;
         }
@@ -199,19 +197,14 @@ export function registerGhostFeature(client) {
         const userId = message.author.id;
 
 
-        /*
-         * Automatically delete new messages
-         * from ghosted users.
-         */
+
         if (ghostedUsers.get(guildId)?.has(userId)) {
             await message.delete().catch(() => { });
             return;
         }
 
 
-        /*
-         * Check prefix.
-         */
+
         const content = message.content.trim();
 
         if (!content.startsWith(PREFIX)) {
@@ -219,9 +212,7 @@ export function registerGhostFeature(client) {
         }
 
 
-        /*
-         * Parse command.
-         */
+
         const args = content
             .slice(PREFIX.length)
             .trim()
@@ -230,9 +221,7 @@ export function registerGhostFeature(client) {
         const command = (args.shift() || '').toLowerCase();
 
 
-        /*
-         * Only handle ghost/unghost.
-         */
+
         if (
             command !== 'ghost' &&
             command !== 'unghost'
@@ -241,10 +230,7 @@ export function registerGhostFeature(client) {
         }
 
 
-        /*
-         * Check whether the executor
-         * has Ghost feature access.
-         */
+
         if (!hasFeatureAccess(userId, 'ghost')) {
 
             return replyWithContainer(
@@ -260,9 +246,7 @@ export function registerGhostFeature(client) {
         const ownerId = process.env.BOT_OWNER_ID;
 
 
-        /*
-         * Check bot permission.
-         */
+
         const botMember = message.guild.members.me;
 
         if (
@@ -378,15 +362,7 @@ export function registerGhostFeature(client) {
         }
 
 
-        /*
-         * Lower moderator.
-         *
-         * A lower moderator can ghost
-         * ANY normal/stranger user.
-         *
-         * But cannot target another lower,
-         * higher moderator, or owner.
-         */
+
         else if (executorLevel === 'lower') {
 
             if (targetLevel === null) {
@@ -395,9 +371,7 @@ export function registerGhostFeature(client) {
         }
 
 
-        /*
-         * Safety fallback.
-         */
+
         else {
 
             canTarget = false;
@@ -473,9 +447,7 @@ export function registerGhostFeature(client) {
         }
 
 
-        /*
-         * Create guild ghost list.
-         */
+
         if (!ghostedUsers.has(guildId)) {
             ghostedUsers.set(
                 guildId,
@@ -487,14 +459,10 @@ export function registerGhostFeature(client) {
         const users = ghostedUsers.get(guildId);
 
 
-        /*
-         * GHOST
-         */
+
         if (command === 'ghost') {
 
-            /*
-             * Already ghosted.
-             */
+
             if (users.has(target.id)) {
 
                 return replyWithContainer(
@@ -512,15 +480,9 @@ export function registerGhostFeature(client) {
             }
 
 
-            /*
-             * Add target.
-             */
+
             users.add(target.id);
 
-
-            /*
-             * Success response.
-             */
             return replyWithContainer(
                 message,
                 createGhostStatusContainer({
@@ -537,14 +499,9 @@ export function registerGhostFeature(client) {
         }
 
 
-        /*
-         * UNGHOST
-         */
         if (command === 'unghost') {
 
-            /*
-             * User isn't ghosted.
-             */
+
             if (!users.has(target.id)) {
 
                 return replyWithContainer(
