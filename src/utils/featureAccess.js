@@ -41,6 +41,7 @@ export function hasFeatureAccess(userId, featureName) {
 
 
 export function getFeatureAccessLevel(userId, featureName) {
+    // Bot owner has the highest level
     if (BOT_OWNER_ID && userId === BOT_OWNER_ID) {
         return 'owner';
     }
@@ -65,5 +66,6 @@ export function getFeatureAccessLevel(userId, featureName) {
         return 'lower';
     }
 
+    // Normal / stranger user
     return null;
 }
