@@ -23,9 +23,7 @@ console.log(
 db.pragma('journal_mode = WAL');
 db.pragma('foreign_keys = ON');
 
-// ==========================================
-// TABLE
-// ==========================================
+
 
 db.exec(`
     CREATE TABLE IF NOT EXISTS whispers (
